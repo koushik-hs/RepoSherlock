@@ -65,6 +65,8 @@ The four findings remain open in the installed package. The publisher's current 
 | WARNING | [CVE-2026-45831](https://github.com/advisories/GHSA-xph7-9rjv-w5fr), RBAC scope validation | 0.5.0–1.5.9 |
 | WARNING | [CVE-2026-45833](https://github.com/advisories/GHSA-36p7-vc44-83pf), authenticated server code injection | 0.4.17–1.5.9 |
 
+**Owner decision on 2026-11-23.** Koushik HS accepted the residual risk for the source release under the embedded, loopback-only, single-user configuration. The four advisories remain open. Reassess before enabling the Chroma HTTP server or changing deployment scope.
+
 ## Release reverification
 
 | Status | Check | Observed result |
@@ -84,13 +86,13 @@ The four findings remain open in the installed package. The publisher's current 
 | Status | Item | Disposition |
 | --- | --- | --- |
 | PASS | Candidate release contents | A read-only check using a disposable Git directory found 134 first-commit candidates. The ignore rules excluded environment overrides, package-manager credentials, model caches, Chroma indexes, snapshots, logs, virtual environments, and QA output. The seven release screenshots and synthetic source fixtures remain eligible. The credential scan found two intentional test markers and zero matching credential values. |
-| NOT TESTED | Git history | The project has no Git metadata. Audit any imported history separately before publishing. |
-| REQUIRES USER ACTION | Git initialization and licensing | The source is ready for a first-commit review. The owner controls initialization, selection of a project license, and notices for any redistributed assets. No license was selected. |
+| PASS | Git history | The release gate audited the local initial commit after Git was initialized. Audit any imported history separately before publishing. |
+| PASS | Project licensing | The owner approved MIT for RepoSherlock's original source, with copyright 2026 Koushik HS. [License](../LICENSE) · [Third-party notices](../THIRD_PARTY_NOTICES.md) |
 | WARNING | Local trust and privacy | Redaction is heuristic and indexes can contain source. The guard rechecks before dispatch, and concurrent writers can still change files after any point-in-time check. Keep the checkout and index under the operator's control. The launcher clears the clipboard copy after 60 seconds. The server pairing code remains valid for the launcher session, and tokens rotate on restart. |
 | NOT TESTED | Live Gemini browser | All Gemini traffic in verification was intercepted. A live browser claim needs a separately authorized synthetic receipt run. |
 | NOT TESTED | Multi-user or externally exposed deployment | The verified configuration is single-user and loopback-only. |
 
-**Recommendation.** The offline workflow is suitable for a labeled local demo. Hold public GitHub publication until the owner completes licensing and first-commit review and explicitly accepts or resolves the documented embedded-only ChromaDB exposure. Keep Chroma's HTTP server outside the release configuration.
+**Recommendation.** The offline workflow is suitable for a labeled local demo. Verify the private GitHub repository, final source archive, and draft release before asking the owner to approve public publication. Keep Chroma's HTTP server outside the release configuration.
 
 ## Files changed
 

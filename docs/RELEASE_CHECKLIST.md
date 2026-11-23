@@ -2,11 +2,12 @@
 
 ## Source and secrets
 
-- [x] Review the source export and verify ignore rules in a disposable Git repository. The root checkout has no Git metadata. The sample fixture, dependency lockfile, environment template, and curated screenshots are eligible for release.
+- [x] Review the 134 files in the initial Git commit. The sample fixtures, dependency lockfile, environment template, and seven curated screenshots are eligible for release.
 - [x] Keep environment overrides, package-manager credentials, private repositories, QA output, model caches, local indexes, and debug logs out of the source package. Existing local data remains on disk.
 - [x] Scan release-candidate text for common provider credentials, private keys, app bearer and pairing literals, and credential-bearing URLs. The two private-key header matches were intentional scanner and redaction test fixtures. The curated images were visually checked for credentials and machine paths. The indexing screenshot masks the absolute path.
-- [ ] Audit the intended repository's tracked paths and all available Git refs and history before making it public. This workspace has no history to inspect. If a real credential appears, revoke or rotate it first, then coordinate history cleanup and check the remotes and forks that might retain it.
-- [ ] Confirm ownership and choose a license before publishing. The current source export has no license file.
+- [x] Audit the local initial commit for credentials and private files. If additional history is imported, audit it before publishing.
+- [x] Record the owner's approval of MIT for the original source and include the upstream notices. [License](../LICENSE) · [Third-party notices](../THIRD_PARTY_NOTICES.md)
+- [x] Record the owner's acceptance of the four open ChromaDB server advisories for embedded, loopback-only, single-user use. [Scope and advisory references](FINAL_AUDIT.md#chromadb)
 
 ## Functional and security checks
 
@@ -20,7 +21,6 @@
 
 ## Before a GitHub release
 
-1. Resolve the history audit and licensing items in the intended Git repository. Inspect the complete staged file list and screenshots before publishing.
-2. Repeat the [Windows setup](../README.md#windows-setup) from a fresh checkout and run the tests and [offline browser smoke](END_TO_END_TESTING.md#offline-browser-verification).
-3. Draft release notes with the Windows requirements, loopback-only single-user scope, and separate evidence for the scripted benchmark, the one-pair live CLI sample, and the browser intercept. [Benchmark evidence](INVESTIGATION_BENCHMARK.md#recorded-results-and-scope)
-4. Tag the reviewed commit, confirm the GitHub source archive contains only intended release files, and publish only after owner approval.
+1. Verify the authenticated account and private repository. Confirm its main branch matches the reviewed commit.
+2. Review the annotated tag, draft release notes, and GitHub source archive in the private repository.
+3. Obtain the owner's explicit approval before changing visibility or publishing the release.

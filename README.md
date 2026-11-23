@@ -99,4 +99,8 @@ npm.cmd --prefix .\frontend run build
 - **Investigations** pair both strategies on nine synthetic cases using a scripted provider. A separate historical one-case Gemini CLI run illustrates the additional evidence, time, and requests that agentic retrieval can consume. [Benchmark and measured results](docs/INVESTIGATION_BENCHMARK.md)
 - **Browser integration** runs real local services and intercepts the Gemini SDK transport. It verifies pairing, indexing, search, preview, approval, citations, trace, and job recovery without a provider key. [End-to-end testing](docs/END_TO_END_TESTING.md)
 
+## License
+
+RepoSherlock's original source is available under the MIT License. Dependencies and downloaded assets retain their upstream terms. [License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+
 [Release checklist](docs/RELEASE_CHECKLIST.md) · [Final audit](docs/FINAL_AUDIT.md) · [Interview preparation](docs/INTERVIEW_PREPARATION.md) · [Build log](docs/BUILD_LOG.md)
