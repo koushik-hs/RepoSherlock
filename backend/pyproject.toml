@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reposherlock"
+version = "0.2.0"
+description = "Local source ingestion and semantic code search"
+readme = {text = "RepoSherlock indexes and searches local source code.", content-type = "text/plain"}
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "pydantic>=2,<3",
+    "uvicorn>=0.30,<1",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10", "httpx>=0.27,<1"]
+semantic = [
+    "chromadb>=1.3,<2",
+    "tree-sitter>=0.25,<0.27",
+    "tree-sitter-python>=0.25,<0.26",
+    "tree-sitter-javascript>=0.25,<0.26",
+    "tree-sitter-typescript>=0.23,<0.24",
+]
+embeddings = ["sentence-transformers>=5.7,<6", "transformers>=5.24,<6"]
+investigation = ["google-genai>=2.34,<3", "httpx>=0.28.1,<1"]
+
+[tool.setuptools.packages.find]
+include = ["reposherlock*"]
+
+[tool.setuptools.package-data]
+"reposherlock.benchmarking" = ["cases.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

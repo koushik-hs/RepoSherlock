@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "receipt-quantity",
+      "fixture": "buggy_receipts",
+      "category": "single_file",
+      "issue": "Receipt totals are too low when one line contains multiple units. Single-unit purchases look fine.",
+      "rationale": "The existing receipt fixture has a direct arithmetic defect and an unrelated inventory helper.",
+      "defect": {
+        "path": "receipts.py",
+        "symbol": "receipt_total",
+        "start_line": 12,
+        "end_line": 12
+      },
+      "diagnosis": "The total sums the price of one unit per line, ignoring each line's quantity.",
+      "fix": "Multiply unit price by quantity before summing the lines.",
+      "regression": "Two units at 250 cents and one at 100 cents should total 600 cents."
+    },
+    {
+      "id": "shipping-threshold",
+      "fixture": "buggy_shipping",
+      "category": "cross_file",
+      "issue": "Checkout charges $4.99 for shipping on an order of exactly $50 even though the store advertises free shipping starting at $50.",
+      "rationale": "The checkout wrapper and tariff implementation are both needed to explain the observed checkout behavior.",
+      "defect": {
+        "path": "rates.py",
+        "symbol": "standard_fee",
+        "start_line": 5,
+        "end_line": 8
+      },
+      "diagnosis": "Checkout delegates to the standard tariff, whose strict comparison excludes a subtotal of exactly 5000 cents.",
+      "fix": "Make the free-shipping threshold inclusive in the tariff.",
+      "regression": "Check 4999, 5000, and 5001 cents, expecting 499, 0, and 0 respectively.",
+      "support": [
+        {
+          "path": "checkout.py",
+          "symbol": "checkout_shipping_cents",
+          "start_line": 6,
+          "end_line": 6
+        }
+      ],
+      "cross_file": true
+    },
+    {
+      "id": "loading-capacity",
+      "fixture": "buggy_dispatch",
+      "category": "boundary",
+      "issue": "Dispatch rejects a loading slot when the requested parcel count exactly matches the posted slot capacity.",
+      "rationale": "The exact-fit case probes an inclusive business boundary.",
+      "defect": {
+        "path": "timing.py",
+        "symbol": "is_slot_available",
+        "start_line": 7,
+        "end_line": 8
+      },
+      "diagnosis": "The strict less-than capacity check excludes an exact fit.",
+      "fix": "Allow requests up to and including the capacity.",
+      "regression": "Check that 9 and 10 fit a capacity of 10, while 11 does not."
+    },
+    {
+      "id": "catalog-archived",
+      "fixture": "buggy_catalog",
+      "category": "filtering",
+      "issue": "The default storefront catalog shows archived products and hides the current ones. Turning on the option to include archived products shows everything.",
+      "rationale": "The default and opt-in branches separate the filtering mistake from other catalog behavior.",
+      "defect": {
+        "path": "catalog.py",
+        "symbol": "select_visible",
+        "start_line": 3,
+        "end_line": 5
+      },
+      "diagnosis": "The default predicate keeps archived products, while the opt-in branch already returns all products.",
+      "fix": "Keep current products by inverting the default predicate and preserve the opt-in branch.",
+      "regression": "With both active and archived products, check that default returns only active and opt-in returns both."
+    },
+    {
+      "id": "catalog-price-cache",
+      "fixture": "buggy_catalog",
+      "category": "cache_invalidation",
+      "issue": "After a product price is viewed, an admin price change succeeds but a second view still displays the original price.",
+      "rationale": "A warmed read followed by a write isolates cache invalidation from initial lookup.",
+      "defect": {
+        "path": "catalog.py",
+        "symbol": "PriceBook.set_price",
+        "start_line": 18,
+        "end_line": 19
+      },
+      "diagnosis": "Updating the backing price leaves an existing cached price untouched, so the next read reuses the stale value.",
+      "fix": "Invalidate or update the cached entry for the SKU on writes.",
+      "regression": "Read a price, change it, and read again on the same price book, verifying that other SKUs are unaffected."
+    },
+    {
+      "id": "catalog-page-count",
+      "fixture": "buggy_catalog",
+      "category": "misleading_symbol",
+      "issue": "A request for three products on the second page may return nothing even when enough products remain. The first page works.",
+      "rationale": "The function name promises count-based pagination, while the implementation treats the limit as an absolute endpoint.",
+      "defect": {
+        "path": "catalog.py",
+        "symbol": "page_products_by_count",
+        "start_line": 22,
+        "end_line": 24
+      },
+      "diagnosis": "The slice treats the requested count as the stop index instead of adding it to the offset.",
+      "fix": "Use the offset plus the requested count as the slice stop.",
+      "regression": "With ten products, offset 3 and limit 3 should return positions 3 through 5, and a final partial page should still work."
+    },
+    {
+      "id": "dispatch-window",
+      "fixture": "buggy_dispatch",
+      "category": "wrong_initial_locus",
+      "issue": "The delivery window display shows 200 minutes for a two-hour route. The report was filed against the dashboard view.",
+      "rationale": "The report names the UI, while the linked conversion in timing owns the arithmetic. Related forecasting functions compete for retrieval.",
+      "defect": {
+        "path": "timing.py",
+        "symbol": "minutes_from_hours",
+        "start_line": 2,
+        "end_line": 3
+      },
+      "diagnosis": "The dashboard delegates to a converter that multiplies hours by 100 instead of 60.",
+      "fix": "Convert hours using 60 minutes per hour in the shared helper.",
+      "regression": "Check that a two-hour route displays 120 minutes and a half hour displays 30.",
+      "support": [
+        {
+          "path": "dashboard.py",
+          "symbol": "delivery_window_minutes",
+          "start_line": 6,
+          "end_line": 6
+        }
+      ],
+      "cross_file": true
+    },
+    {
+      "id": "receipt-missing-input",
+      "fixture": "buggy_receipts",
+      "category": "insufficient_evidence",
+      "issue": "A printed receipt looks wrong for one order. The reporter has no transaction details, actual total, expected total, or list of purchased items.",
+      "rationale": "Several outcomes are compatible with the report. The fixture contains a known defect but the report gives no basis for attributing this occurrence to it."
+    },
+    {
+      "id": "shipping-sms",
+      "fixture": "buggy_shipping",
+      "category": "unimplemented",
+      "issue": "Customers do not receive an SMS when free shipping becomes available after a cart update.",
+      "rationale": "The fixture has checkout tariff and currency display code. It has no subscriptions, cart event handler, or SMS integration."
+    }
+  ]
+}

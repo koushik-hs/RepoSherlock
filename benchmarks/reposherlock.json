@@ -1,0 +1,145 @@
+{
+  "positives": [
+    {
+      "id": "scan-binary", "category": "natural-language",
+      "query": "How are binary files and excluded directories skipped during repository scanning?",
+      "relevant": [
+        {"path": "ingestion/scanner.py", "symbol": "_scan", "anchor": "BINARY_CONTROL_BYTES.search(raw)"},
+        {"path": "ingestion/scanner.py", "symbol": "_walk", "anchor": "in EXCLUDED_DIRECTORIES"}
+      ]
+    },
+    {
+      "id": "oversized-functions", "category": "natural-language",
+      "query": "Where does the system split oversized functions into chunks while preserving line numbers?",
+      "relevant": [
+        {"path": "ingestion/syntax_chunker.py", "symbol": "_bounded", "anchor": "MAX_CHUNK_BYTES"},
+        {"path": "ingestion/syntax_chunker.py", "symbol": "chunk_source", "anchor": "end_line = bisect_right"}
+      ]
+    },
+    {
+      "id": "reuse-vectors", "category": "natural-language",
+      "query": "How does the vector index avoid regenerating embeddings for unchanged chunks?",
+      "relevant": [
+        {"path": "semantic/indexing.py", "symbol": "_copy_chunks", "anchor": "previous_inputs[key]"},
+        {"path": "semantic/indexing.py", "symbol": "build_semantic_index", "anchor": "previous_state.matches(source)"}
+      ]
+    },
+    {
+      "id": "exact-chunk-source", "category": "exact-identifier",
+      "query": "chunk_source",
+      "relevant": [{"path": "ingestion/syntax_chunker.py", "symbol": "chunk_source"}]
+    },
+    {
+      "id": "windows-links", "category": "natural-language",
+      "query": "How can the scanner tell a symbolic link from a Windows junction?",
+      "relevant": [{"path": "ingestion/scanner.py", "symbol": "is_link", "anchor": "FILE_ATTRIBUTE_REPARSE_POINT"}]
+    },
+    {
+      "id": "health-endpoint", "category": "file-location",
+      "query": "Which module registers GET /api/health and returns the service status?",
+      "relevant": [{"path": "main.py", "symbol": "health", "anchor": "async def health"}]
+    },
+    {
+      "id": "index-directory", "category": "exact-identifier",
+      "query": "index_directory",
+      "relevant": [{"path": "ingestion/indexer.py", "symbol": "index_directory"}]
+    },
+    {
+      "id": "file-byte-budget", "category": "file-location",
+      "query": "Where in scanner.py does a single file exceed the maximum size budget?",
+      "relevant": [{"path": "ingestion/scanner.py", "symbol": "_scan", "anchor": "info.st_size > limits.max_file_bytes"}]
+    },
+    {
+      "id": "fallback-window", "category": "paraphrase",
+      "query": "How far does the sliding window move when neighboring blocks share some lines?",
+      "relevant": [{"path": "ingestion/chunker.py", "symbol": "chunk_file", "anchor": "stride ="}]
+    },
+    {
+      "id": "manifest-swap", "category": "bug-report",
+      "query": "Indexing was interrupted after writing JSONL but before making the manifest visible. Where is publication?",
+      "relevant": [{"path": "ingestion/indexer.py", "symbol": "index_repository", "anchor": "os.replace(staged_manifest, manifest_path)"}]
+    },
+    {
+      "id": "stale-checkout", "category": "bug-report",
+      "query": "A search complained that the index was stale after I edited a local file. Where is the checkout compared?",
+      "relevant": [{"path": "semantic/storage.py", "symbol": "verified_snapshot", "anchor": "source_fingerprint"}]
+    },
+    {
+      "id": "embedding-batch", "category": "natural-language",
+      "query": "Which code limits how many inputs can be put in one embedding batch?",
+      "relevant": [{"path": "semantic/embeddings.py", "symbol": "validate_batch_size"}]
+    },
+    {
+      "id": "win32-max-path", "category": "bug-report",
+      "query": "A Windows checkout path is longer than MAX_PATH. How do Win32 APIs get the absolute path?",
+      "relevant": [{"path": "core/paths.py", "symbol": "extended_path"}]
+    },
+    {
+      "id": "invalid-vectors", "category": "bug-report",
+      "query": "Embedding inference produced NaN or returned a vector of the wrong dimension. What checks it?",
+      "relevant": [{"path": "semantic/embeddings.py", "symbol": "checked_embeddings", "anchor": "math.isfinite(value)"}]
+    },
+    {
+      "id": "damaged-jsonl", "category": "natural-language",
+      "query": "Which code compares the stored SHA-256 digest to detect a damaged JSONL chunk file?",
+      "relevant": [{"path": "semantic/storage.py", "symbol": "verify_chunk_file", "anchor": "file_digest"}]
+    },
+    {
+      "id": "persistent-client", "category": "natural-language",
+      "query": "Find the persistent Chroma client setup that disables telemetry.",
+      "relevant": [{"path": "semantic/storage.py", "symbol": "open_database", "anchor": "chromadb.PersistentClient"}]
+    },
+    {
+      "id": "cosine-distance", "category": "paraphrase",
+      "query": "A neighbor distance has to be displayed as a larger-is-better cosine score. Where is it converted?",
+      "relevant": [{"path": "semantic/retrieval.py", "symbol": "search_vectors", "anchor": "1.0 - distance"}]
+    },
+    {
+      "id": "unicode-columns", "category": "bug-report",
+      "query": "Chunk positions are wrong after a multibyte Unicode character. Where are byte columns calculated?",
+      "relevant": [{"path": "ingestion/syntax_chunker.py", "symbol": "chunk_source", "anchor": "start_column ="}]
+    },
+    {
+      "id": "credential-filter", "category": "symbol-identifier",
+      "query": "Where are application_default_credentials and ssh_host_ private-key filenames excluded?",
+      "relevant": [{"path": "ingestion/scanner.py", "symbol": "_is_sensitive", "anchor": "ssh_host_"}]
+    },
+    {
+      "id": "parse-fallback", "category": "paraphrase",
+      "query": "A source file has broken syntax but still appears in search. Where is the fallback decided?",
+      "relevant": [{"path": "ingestion/syntax_chunker.py", "symbol": "chunk_source", "anchor": "root_node.has_error"}]
+    },
+    {
+      "id": "checkout-identifier", "category": "exact-identifier",
+      "query": "repository_identifier",
+      "relevant": [{"path": "ingestion/indexer.py", "symbol": "repository_identifier"}]
+    },
+    {
+      "id": "index-busy", "category": "bug-report",
+      "query": "A second process reports that the semantic index is busy while another operation is writing. What owns the lock?",
+      "relevant": [{"path": "semantic/storage.py", "symbol": "repository_lock", "anchor": "LK_NBLCK"}]
+    }
+  ],
+  "negatives": [
+    {
+      "id": "missing-auth", "category": "unsupported",
+      "query": "Where is authentication or authorization enforced for users?"
+    },
+    {
+      "id": "missing-billing", "category": "unsupported",
+      "query": "How do background workers reconcile Stripe webhook invoices?"
+    },
+    {
+      "id": "missing-redis", "category": "unsupported",
+      "query": "Where does the Redis pub/sub subscriber retry dropped messages?"
+    },
+    {
+      "id": "missing-renderer", "category": "unsupported",
+      "query": "What shader computes bloom in the Vulkan renderer?"
+    },
+    {
+      "id": "missing-kubernetes", "category": "unsupported",
+      "query": "Which Kubernetes readiness probe restarts the production pods?"
+    }
+  ]
+}
